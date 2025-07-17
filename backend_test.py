@@ -319,7 +319,8 @@ class NBNTrackerTester:
             # Test UPDATE
             if self.created_items['budgets']:
                 budget_id = self.created_items['budgets'][0]
-                update_data = {"limit": 18000.0}
+                # Budget update requires all required fields (API design limitation)
+                update_data = {"type": "monthly", "category": "food", "limit": 18000.0}
                 self.log(f"Testing budget update: {budget_id}")
                 response = self.session.put(f"{BACKEND_URL}/budgets/{budget_id}", json=update_data)
                 if response.status_code == 200:
