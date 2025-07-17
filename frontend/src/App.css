@@ -1,38 +1,296 @@
-.App {
-    text-align: center;
+/* Additional custom styles for the App component */
+
+.nav-link {
+  @apply relative px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200;
 }
 
-.App-logo {
-    height: 40vmin;
-    pointer-events: none;
+.nav-link:hover {
+  @apply bg-gray-100 dark:bg-gray-800;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-    .App-logo {
-        animation: App-logo-spin infinite 20s linear;
-    }
+.nav-link.active {
+  @apply bg-primary-100 text-primary-700 dark:bg-primary-900 dark:text-primary-200;
 }
 
-.App-header {
-    background-color: #0f0f10;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: calc(10px + 2vmin);
-    color: white;
+.nav-link.active::before {
+  content: '';
+  @apply absolute left-0 top-0 bottom-0 w-1 bg-primary-600 rounded-r-full;
 }
 
-.App-link {
-    color: #61dafb;
+/* Mobile menu styles */
+.mobile-menu {
+  @apply md:hidden;
 }
 
-@keyframes App-logo-spin {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
+.mobile-menu-button {
+  @apply inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500;
+}
+
+.mobile-menu-panel {
+  @apply px-2 pt-2 pb-3 space-y-1 sm:px-3;
+}
+
+/* Dashboard specific styles */
+.dashboard-grid {
+  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6;
+}
+
+.dashboard-card {
+  @apply bg-white dark:bg-gray-800 overflow-hidden shadow-sm rounded-lg border border-gray-200 dark:border-gray-700;
+}
+
+.dashboard-card-header {
+  @apply px-6 py-4 border-b border-gray-200 dark:border-gray-700;
+}
+
+.dashboard-card-body {
+  @apply px-6 py-4;
+}
+
+.metric-card {
+  @apply p-6 bg-gradient-to-br from-primary-50 to-primary-100 dark:from-primary-900 dark:to-primary-800 rounded-lg border border-primary-200 dark:border-primary-700;
+}
+
+.metric-value {
+  @apply text-3xl font-bold text-primary-700 dark:text-primary-200;
+}
+
+.metric-label {
+  @apply text-sm font-medium text-primary-600 dark:text-primary-300;
+}
+
+/* Form styles */
+.form-group {
+  @apply mb-4;
+}
+
+.form-label {
+  @apply block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2;
+}
+
+.form-input {
+  @apply block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-800 dark:text-white sm:text-sm;
+}
+
+.form-select {
+  @apply block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-800 dark:text-white sm:text-sm;
+}
+
+.form-textarea {
+  @apply block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-800 dark:text-white sm:text-sm;
+}
+
+.form-error {
+  @apply mt-1 text-sm text-red-600 dark:text-red-400;
+}
+
+/* Table styles */
+.table-wrapper {
+  @apply overflow-x-auto shadow-sm border border-gray-200 dark:border-gray-700 rounded-lg;
+}
+
+.table {
+  @apply min-w-full divide-y divide-gray-200 dark:divide-gray-700;
+}
+
+.table-header {
+  @apply bg-gray-50 dark:bg-gray-800;
+}
+
+.table-header-cell {
+  @apply px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider;
+}
+
+.table-body {
+  @apply bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700;
+}
+
+.table-row {
+  @apply hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-150;
+}
+
+.table-cell {
+  @apply px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100;
+}
+
+/* Modal styles */
+.modal-overlay {
+  @apply fixed inset-0 bg-gray-600 bg-opacity-50 dark:bg-gray-900 dark:bg-opacity-50 overflow-y-auto h-full w-full z-50;
+}
+
+.modal-container {
+  @apply relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 xl:w-1/3 shadow-lg rounded-md bg-white dark:bg-gray-800 dark:border-gray-700;
+}
+
+.modal-header {
+  @apply flex items-center justify-between pb-3 border-b border-gray-200 dark:border-gray-700;
+}
+
+.modal-title {
+  @apply text-lg font-medium text-gray-900 dark:text-white;
+}
+
+.modal-body {
+  @apply pt-4 pb-2;
+}
+
+.modal-footer {
+  @apply flex items-center justify-end pt-2 border-t border-gray-200 dark:border-gray-700 space-x-2;
+}
+
+/* Alert styles */
+.alert {
+  @apply rounded-md p-4 mb-4;
+}
+
+.alert-success {
+  @apply bg-green-50 dark:bg-green-900 border border-green-200 dark:border-green-700 text-green-800 dark:text-green-200;
+}
+
+.alert-warning {
+  @apply bg-yellow-50 dark:bg-yellow-900 border border-yellow-200 dark:border-yellow-700 text-yellow-800 dark:text-yellow-200;
+}
+
+.alert-error {
+  @apply bg-red-50 dark:bg-red-900 border border-red-200 dark:border-red-700 text-red-800 dark:text-red-200;
+}
+
+.alert-info {
+  @apply bg-blue-50 dark:bg-blue-900 border border-blue-200 dark:border-blue-700 text-blue-800 dark:text-blue-200;
+}
+
+/* Loading states */
+.loading-spinner {
+  @apply animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600;
+}
+
+.loading-dots {
+  @apply inline-flex space-x-1;
+}
+
+.loading-dot {
+  @apply w-2 h-2 bg-primary-600 rounded-full animate-bounce;
+}
+
+.loading-dot:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+.loading-dot:nth-child(3) {
+  animation-delay: 0.2s;
+}
+
+/* Responsive utilities */
+@media (max-width: 640px) {
+  .mobile-responsive {
+    @apply text-sm;
+  }
+  
+  .metric-value {
+    @apply text-2xl;
+  }
+  
+  .dashboard-grid {
+    @apply grid-cols-1 gap-4;
+  }
+  
+  .table-cell {
+    @apply px-4 py-3;
+  }
+  
+  .modal-container {
+    @apply w-11/12 mx-4;
+  }
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  body {
+    @apply bg-white text-black;
+  }
+  
+  .card,
+  .dashboard-card {
+    @apply shadow-none border border-gray-300;
+  }
+  
+  .modal-overlay {
+    display: none;
+  }
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes bounce {
+  0%, 20%, 53%, 80%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  40%, 43% {
+    transform: translate3d(0, -30px, 0);
+  }
+  70% {
+    transform: translate3d(0, -15px, 0);
+  }
+  90% {
+    transform: translate3d(0, -4px, 0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out;
+}
+
+.animate-slide-in {
+  animation: slideIn 0.3s ease-out;
+}
+
+.animate-bounce-in {
+  animation: bounce 0.6s ease-out;
+}
+
+/* Focus styles for accessibility */
+.focus-visible {
+  @apply outline-none ring-2 ring-primary-500 ring-offset-2 ring-offset-white dark:ring-offset-gray-900;
+}
+
+/* Custom scrollbar for better UX */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  @apply bg-gray-100 dark:bg-gray-800 rounded-lg;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  @apply bg-gray-300 dark:bg-gray-600 rounded-lg;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-400 dark:bg-gray-500;
 }
