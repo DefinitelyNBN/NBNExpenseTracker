@@ -26,9 +26,10 @@ app.add_middleware(
 )
 
 # MongoDB connection
-MONGO_URL = os.getenv("MONGO_URL", "mongodb://localhost:27017/nbntracker")
+MONGO_URL = os.getenv("MONGO_URL", "mongodb://localhost:27017")
+DB_NAME = os.getenv("DB_NAME", "nbntracker")
 client = AsyncIOMotorClient(MONGO_URL)
-db = client.nbntracker
+db = client[DB_NAME]
 
 # Security
 security = HTTPBearer()
