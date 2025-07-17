@@ -485,10 +485,18 @@ async def export_data_csv():
     expenses = await db.expenses.find().to_list(length=None)
     budgets = await db.budgets.find().to_list(length=None)
     
+    # Convert MongoDB ObjectIds to strings for JSON serialization
+    def convert_objectid(data):
+        if isinstance(data, list):
+            return [convert_objectid(item) for item in data]
+        elif isinstance(data, dict):
+            return {key: str(value) if hasattr(value, '__str__') and '_id' in key else convert_objectid(value) if isinstance(value, (dict, list)) else value for key, value in data.items()}
+        return data
+    
     return {
-        "subscriptions": subscriptions,
-        "expenses": expenses,
-        "budgets": budgets
+        "subscriptions": convert_objectid(subscriptions),
+        "expenses": convert_objectid(expenses),
+        "budgets": convert_objectid(budgets)
     }
 
 if __name__ == "__main__":
