@@ -280,7 +280,7 @@ const Budget = () => {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {budgets.map((budget) => {
+          {(Array.isArray(budgets) ? budgets : []).map((budget) => {
             const progress = getBudgetProgress(budget);
             const remaining = budget.limit - progress.current;
             
