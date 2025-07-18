@@ -1,6 +1,7 @@
 from fastapi import FastAPI, HTTPException, Depends, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi.staticfiles import StaticFiles
 from motor.motor_asyncio import AsyncIOMotorClient
 from pydantic import BaseModel, Field
 from typing import Optional, List, Dict, Any
@@ -166,7 +167,12 @@ def calculate_yearly_projection(subscriptions: List[Dict]) -> float:
 # API Routes
 @app.get("/api/health")
 async def health_check():
-    return {"status": "healthy"}
+    try:
+        # Try to ping the MongoDB server
+        await db.command("ping")
+        return {"status": "healthy", "db": "connected"}
+    except Exception as e:
+        return {"status": "unhealthy", "db": "disconnected", "error": str(e)}
 
 # Subscription endpoints
 @app.post("/api/subscriptions", response_model=Subscription)
@@ -320,112 +326,99 @@ async def delete_budget(budget_id: str):
 # Dashboard endpoint
 @app.get("/api/dashboard", response_model=DashboardResponse)
 async def get_dashboard():
-    # Get current date
-    now = datetime.utcnow()
-    current_month_start = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
-    current_year_start = now.replace(month=1, day=1, hour=0, minute=0, second=0, microsecond=0)
-    
-    # Get subscriptions
-    subscriptions = await db.subscriptions.find({"is_active": True}).to_list(length=None)
-    
-    # Get expenses
-    monthly_expenses = await db.expenses.find({
-        "date": {"$gte": current_month_start}
-    }).to_list(length=None)
-    
-    yearly_expenses = await db.expenses.find({
-        "date": {"$gte": current_year_start}
-    }).to_list(length=None)
-    
-    # Calculate totals
-    yearly_projection = calculate_yearly_projection(subscriptions)
-    monthly_spending = sum(exp['amount'] for exp in monthly_expenses)
-    yearly_spending = sum(exp['amount'] for exp in yearly_expenses)
-    
-    # Calculate subscription costs for the year
-    subscription_yearly_cost = 0
-    for sub in subscriptions:
-        if sub['is_active']:
-            if sub['billing_frequency'] == 'monthly':
-                subscription_yearly_cost += sub['cost'] * 12
-            else:
-                subscription_yearly_cost += sub['cost']
-    
-    yearly_spending += subscription_yearly_cost
-    
-    # Category breakdown
-    category_breakdown = {}
-    for exp in yearly_expenses:
-        category = exp['category']
-        category_breakdown[category] = category_breakdown.get(category, 0) + exp['amount']
-    
-    # Add subscription costs to breakdown
-    for sub in subscriptions:
-        if sub['is_active']:
-            category = sub['category']
-            yearly_cost = sub['cost'] * 12 if sub['billing_frequency'] == 'monthly' else sub['cost']
-            category_breakdown[category] = category_breakdown.get(category, 0) + yearly_cost
-    
-    # Upcoming subscriptions (next 7 days)
-    upcoming_date = now + timedelta(days=7)
-    upcoming_subscriptions = []
-    for sub in subscriptions:
-        if sub['is_active'] and sub['next_due_date'] <= upcoming_date:
-            upcoming_subscriptions.append({
-                "id": sub['id'],
-                "name": sub['name'],
-                "cost": sub['cost'],
-                "due_date": sub['next_due_date'],
-                "days_until_due": (sub['next_due_date'] - now).days
-            })
-    
-    # Budget alerts
-    budgets = await db.budgets.find().to_list(length=None)
-    budget_alerts = []
-    
-    for budget in budgets:
-        if budget['type'] == 'monthly':
-            current_spending = monthly_spending
-            if budget['category']:
-                current_spending = sum(exp['amount'] for exp in monthly_expenses if exp['category'] == budget['category'])
-        else:  # yearly
-            current_spending = yearly_spending
-            if budget['category']:
-                current_spending = category_breakdown.get(budget['category'], 0)
-        
-        if current_spending > budget['limit']:
-            budget_alerts.append({
-                "type": budget['type'],
-                "category": budget['category'],
-                "limit": budget['limit'],
-                "current": current_spending,
-                "exceeded_by": current_spending - budget['limit']
-            })
-    
-    # Savings suggestions
-    savings_suggestions = []
-    
-    # Suggest cancelling expensive subscriptions
-    expensive_subs = [sub for sub in subscriptions if sub['is_active'] and sub['cost'] > 500]
-    if expensive_subs:
-        total_savings = sum(sub['cost'] * 12 if sub['billing_frequency'] == 'monthly' else sub['cost'] for sub in expensive_subs)
-        savings_suggestions.append(f"Consider reviewing {len(expensive_subs)} expensive subscriptions to save up to ₹{total_savings:.0f} annually")
-    
-    # Suggest reducing high-spending categories
-    high_spending_categories = [(cat, amount) for cat, amount in category_breakdown.items() if amount > yearly_spending * 0.2]
-    if high_spending_categories:
-        cat, amount = max(high_spending_categories, key=lambda x: x[1])
-        savings_suggestions.append(f"Consider reducing spending on {cat} where you've spent ₹{amount:.0f} this year")
-    
-    return DashboardResponse(
-        total_yearly_projection=yearly_projection,
-        current_monthly_spending=monthly_spending,
-        current_yearly_spending=yearly_spending,
-        category_breakdown=category_breakdown,
-        upcoming_subscriptions=upcoming_subscriptions,
-        budget_alerts=budget_alerts,
-        savings_suggestions=savings_suggestions
-    )
+    try:
+        # Get current date
+        now = datetime.utcnow()
+        current_month_start = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+        current_year_start = now.replace(month=1, day=1, hour=0, minute=0, second=0, microsecond=0)
+        # Get subscriptions
+        subscriptions = await db.subscriptions.find({"is_active": True}).to_list(length=None)
+        # Get expenses
+        monthly_expenses = await db.expenses.find({
+            "date": {"$gte": current_month_start}
+        }).to_list(length=None)
+        yearly_expenses = await db.expenses.find({
+            "date": {"$gte": current_year_start}
+        }).to_list(length=None)
+        # Calculate totals
+        yearly_projection = calculate_yearly_projection(subscriptions)
+        monthly_spending = sum(exp['amount'] for exp in monthly_expenses)
+        yearly_spending = sum(exp['amount'] for exp in yearly_expenses)
+        # Calculate subscription costs for the year
+        subscription_yearly_cost = 0
+        for sub in subscriptions:
+            if sub['is_active']:
+                if sub['billing_frequency'] == 'monthly':
+                    subscription_yearly_cost += sub['cost'] * 12
+                else:
+                    subscription_yearly_cost += sub['cost']
+        yearly_spending += subscription_yearly_cost
+        # Category breakdown
+        category_breakdown = {}
+        for exp in yearly_expenses:
+            category = exp['category']
+            category_breakdown[category] = category_breakdown.get(category, 0) + exp['amount']
+        # Add subscription costs to breakdown
+        for sub in subscriptions:
+            if sub['is_active']:
+                category = sub['category']
+                yearly_cost = sub['cost'] * 12 if sub['billing_frequency'] == 'monthly' else sub['cost']
+                category_breakdown[category] = category_breakdown.get(category, 0) + yearly_cost
+        # Upcoming subscriptions (next 7 days)
+        upcoming_date = now + timedelta(days=7)
+        upcoming_subscriptions = []
+        for sub in subscriptions:
+            if sub['is_active'] and sub['next_due_date'] <= upcoming_date:
+                upcoming_subscriptions.append({
+                    "id": sub['id'],
+                    "name": sub['name'],
+                    "cost": sub['cost'],
+                    "due_date": sub['next_due_date'],
+                    "days_until_due": (sub['next_due_date'] - now).days
+                })
+        # Budget alerts
+        budgets = await db.budgets.find().to_list(length=None)
+        budget_alerts = []
+        for budget in budgets:
+            if budget['type'] == 'monthly':
+                current_spending = monthly_spending
+                if budget['category']:
+                    current_spending = sum(exp['amount'] for exp in monthly_expenses if exp['category'] == budget['category'])
+            else:  # yearly
+                current_spending = yearly_spending
+                if budget['category']:
+                    current_spending = category_breakdown.get(budget['category'], 0)
+            if current_spending > budget['limit']:
+                budget_alerts.append({
+                    "type": budget['type'],
+                    "category": budget['category'],
+                    "limit": budget['limit'],
+                    "current": current_spending,
+                    "exceeded_by": current_spending - budget['limit']
+                })
+        # Savings suggestions
+        savings_suggestions = []
+        # Suggest cancelling expensive subscriptions
+        expensive_subs = [sub for sub in subscriptions if sub['is_active'] and sub['cost'] > 500]
+        if expensive_subs:
+            total_savings = sum(sub['cost'] * 12 if sub['billing_frequency'] == 'monthly' else sub['cost'] for sub in expensive_subs)
+            savings_suggestions.append(f"Consider reviewing {len(expensive_subs)} expensive subscriptions to save up to ₹{total_savings:.0f} annually")
+        # Suggest reducing high-spending categories
+        high_spending_categories = [(cat, amount) for cat, amount in category_breakdown.items() if amount > yearly_spending * 0.2]
+        if high_spending_categories:
+            cat, amount = max(high_spending_categories, key=lambda x: x[1])
+            savings_suggestions.append(f"Consider reducing spending on {cat} where you've spent ₹{amount:.0f} this year")
+        return DashboardResponse(
+            total_yearly_projection=yearly_projection,
+            current_monthly_spending=monthly_spending,
+            current_yearly_spending=yearly_spending,
+            category_breakdown=category_breakdown,
+            upcoming_subscriptions=upcoming_subscriptions,
+            budget_alerts=budget_alerts,
+            savings_suggestions=savings_suggestions
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
 
 # Analytics endpoints
 @app.get("/api/analytics/categories")
@@ -498,6 +491,10 @@ async def export_data_csv():
         "expenses": convert_objectid(expenses),
         "budgets": convert_objectid(budgets)
     }
+
+# Serve React static files from the build directory
+frontend_build_path = os.path.join(os.path.dirname(__file__), '..', 'frontend', 'build')
+app.mount("/", StaticFiles(directory=frontend_build_path, html=True), name="static")
 
 if __name__ == "__main__":
     import uvicorn

@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Create axios instance with base configuration
 const api = axios.create({
-  baseURL: process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001',
+  baseURL: '/api',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
@@ -17,12 +17,7 @@ api.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-    
-    // Add /api prefix to all routes
-    if (config.url && !config.url.startsWith('/api')) {
-      config.url = `/api${config.url}`;
-    }
-    
+    // Do not add any /api prefix here
     return config;
   },
   (error) => {

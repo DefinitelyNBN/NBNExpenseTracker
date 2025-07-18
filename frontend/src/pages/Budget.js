@@ -123,6 +123,19 @@ const Budget = () => {
     };
   };
 
+  const getProgressColor = (status) => {
+    switch (status) {
+      case 'safe':
+        return '#22c55e'; // green
+      case 'warning':
+        return '#f59e0b'; // yellow
+      case 'danger':
+        return '#ef4444'; // red
+      default:
+        return '#6b7280'; // gray
+    }
+  };
+
   const getStatusColor = (status) => {
     switch (status) {
       case 'safe':
@@ -133,32 +146,6 @@ const Budget = () => {
         return 'text-red-600 dark:text-red-400';
       default:
         return 'text-gray-600 dark:text-gray-400';
-    }
-  };
-
-  const getStatusIcon = (status) => {
-    switch (status) {
-      case 'safe':
-        return <CheckCircle className="w-5 h-5" />;
-      case 'warning':
-        return <AlertTriangle className="w-5 h-5" />;
-      case 'danger':
-        return <AlertTriangle className="w-5 h-5" />;
-      default:
-        return <Target className="w-5 h-5" />;
-    }
-  };
-
-  const getProgressColor = (status) => {
-    switch (status) {
-      case 'safe':
-        return '#22c55e';
-      case 'warning':
-        return '#f59e0b';
-      case 'danger':
-        return '#ef4444';
-      default:
-        return '#6b7280';
     }
   };
 
@@ -310,7 +297,9 @@ const Budget = () => {
                   </div>
                   <div className="flex items-center space-x-2">
                     <div className={`flex items-center ${getStatusColor(progress.status)}`}>
-                      {getStatusIcon(progress.status)}
+                      {progress.status === 'safe' && <CheckCircle className="w-5 h-5" />}
+                      {progress.status === 'warning' && <AlertTriangle className="w-5 h-5" />}
+                      {progress.status === 'danger' && <AlertTriangle className="w-5 h-5" />}
                     </div>
                     <button
                       onClick={() => handleEdit(budget)}

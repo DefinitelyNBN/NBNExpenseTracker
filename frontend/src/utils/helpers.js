@@ -459,8 +459,6 @@ export const showNotification = (title, options = {}) => {
   }
   
   const notification = new Notification(title, {
-    icon: '/favicon.ico',
-    badge: '/favicon.ico',
     ...options
   });
   

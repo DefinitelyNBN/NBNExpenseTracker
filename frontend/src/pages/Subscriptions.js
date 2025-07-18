@@ -126,17 +126,6 @@ const Subscriptions = () => {
     return 'text-green-600 bg-green-100 dark:bg-green-900 dark:text-green-300';
   };
 
-  const getStatusIcon = (dueDate) => {
-    const now = new Date();
-    const due = new Date(dueDate);
-    const diffTime = due.getTime() - now.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-    if (diffDays < 0) return <AlertCircle className="w-4 h-4" />;
-    if (diffDays <= 3) return <Clock className="w-4 h-4" />;
-    return <CheckCircle className="w-4 h-4" />;
-  };
-
   // Filter and sort subscriptions
   const filteredSubscriptions = subscriptions
     .filter(sub => 
@@ -286,7 +275,6 @@ const Subscriptions = () => {
                   <span className="text-sm text-gray-600 dark:text-gray-400">Next Due</span>
                   <div className="flex items-center space-x-2">
                     <span className={`flex items-center space-x-1 px-2 py-1 rounded-full text-xs ${getStatusColor(subscription.next_due_date)}`}>
-                      {getStatusIcon(subscription.next_due_date)}
                       <span>{formatRelativeTime(subscription.next_due_date)}</span>
                     </span>
                   </div>

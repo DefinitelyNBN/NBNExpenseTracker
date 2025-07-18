@@ -20,7 +20,6 @@ import {
   TrendingUp, 
   TrendingDown,
   Calendar,
-  PieChart as PieChartIcon,
   BarChart3,
   Download,
   Filter,
@@ -228,7 +227,6 @@ const Analytics = () => {
           onClick={() => setViewMode('category')}
           className={`btn ${viewMode === 'category' ? 'btn-primary' : 'btn-secondary'}`}
         >
-          <PieChartIcon className="w-4 h-4 mr-2" />
           Category Breakdown
         </button>
         <button

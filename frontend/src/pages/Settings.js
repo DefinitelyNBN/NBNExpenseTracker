@@ -11,7 +11,6 @@ import {
   Save,
   AlertTriangle,
   CheckCircle,
-  Settings as SettingsIcon
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { exportToCSV } from '../utils/helpers';
@@ -138,7 +137,6 @@ const Settings = () => {
       <div className="dashboard-card">
         <div className="dashboard-card-header">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
-            <SettingsIcon className="w-5 h-5 mr-2" />
             General Settings
           </h3>
         </div>
@@ -202,7 +200,6 @@ const Settings = () => {
       <div className="dashboard-card">
         <div className="dashboard-card-header">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
-            <Bell className="w-5 h-5 mr-2" />
             Notifications
           </h3>
         </div>
@@ -289,7 +286,6 @@ const Settings = () => {
       <div className="dashboard-card">
         <div className="dashboard-card-header">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
-            <Shield className="w-5 h-5 mr-2" />
             Data Management
           </h3>
         </div>
@@ -342,7 +338,6 @@ const Settings = () => {
       <div className="dashboard-card">
         <div className="dashboard-card-header">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
-            <User className="w-5 h-5 mr-2" />
             App Information
           </h3>
         </div>

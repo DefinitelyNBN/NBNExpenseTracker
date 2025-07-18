@@ -19,12 +19,12 @@ const Navigation = ({ darkMode, toggleDarkMode }) => {
   const location = useLocation();
 
   const navItems = [
-    { path: '/', icon: Home, label: 'Dashboard' },
-    { path: '/subscriptions', icon: CreditCard, label: 'Subscriptions' },
-    { path: '/expenses', icon: Receipt, label: 'Expenses' },
-    { path: '/budget', icon: PiggyBank, label: 'Budget' },
-    { path: '/analytics', icon: BarChart3, label: 'Analytics' },
-    { path: '/settings', icon: Settings, label: 'Settings' },
+    { path: '/', label: 'Dashboard' },
+    { path: '/subscriptions', label: 'Subscriptions' },
+    { path: '/expenses', label: 'Expenses' },
+    { path: '/budget', label: 'Budget' },
+    { path: '/analytics', label: 'Analytics' },
+    { path: '/settings', label: 'Settings' },
   ];
 
   const isActive = (path) => location.pathname === path;
@@ -48,14 +48,12 @@ const Navigation = ({ darkMode, toggleDarkMode }) => {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-1">
             {navItems.map((item) => {
-              const Icon = item.icon;
               return (
                 <Link
                   key={item.path}
                   to={item.path}
                   className={`nav-link ${isActive(item.path) ? 'active' : ''}`}
                 >
-                  <Icon className="w-4 h-4 mr-2" />
                   {item.label}
                 </Link>
               );
@@ -110,7 +108,6 @@ const Navigation = ({ darkMode, toggleDarkMode }) => {
         <div className="md:hidden">
           <div className="mobile-menu-panel">
             {navItems.map((item) => {
-              const Icon = item.icon;
               return (
                 <Link
                   key={item.path}
@@ -118,7 +115,6 @@ const Navigation = ({ darkMode, toggleDarkMode }) => {
                   className={`nav-link block ${isActive(item.path) ? 'active' : ''}`}
                   onClick={() => setIsOpen(false)}
                 >
-                  <Icon className="w-4 h-4 mr-2" />
                   {item.label}
                 </Link>
               );
