@@ -127,23 +127,26 @@ const Subscriptions = () => {
   };
 
   // Filter and sort subscriptions
-  const filteredSubscriptions = subscriptions
-    .filter(sub => 
-      sub.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-      (categoryFilter === '' || sub.category === categoryFilter)
-    )
-    .sort((a, b) => {
-      switch (sortBy) {
-        case 'name':
-          return a.name.localeCompare(b.name);
-        case 'cost':
-          return b.cost - a.cost;
-        case 'next_due_date':
-          return new Date(a.next_due_date) - new Date(b.next_due_date);
-        default:
-          return 0;
-      }
-    });
+  const filteredSubscriptions = Array.isArray(subscriptions)
+  ? subscriptions
+      .filter(sub =>
+        sub?.name?.toLowerCase().includes(searchTerm.toLowerCase()) &&
+        (categoryFilter === '' || sub?.category === categoryFilter)
+      )
+      .sort((a, b) => {
+        switch (sortBy) {
+          case 'name':
+            return a.name.localeCompare(b.name);
+          case 'cost':
+            return b.cost - a.cost;
+          case 'next_due_date':
+            return new Date(a.next_due_date) - new Date(b.next_due_date);
+          default:
+            return 0;
+        }
+      })
+  : [];
+
 
   return (
     <div className="space-y-6">
