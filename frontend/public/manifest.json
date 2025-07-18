@@ -1,8 +1,24 @@
 {
-  "name": "NBNTracker",
-  "short_name": "NBNTracker",
+  "name": "NBN Expense Tracker",
+  "short_name": "NBNTrack",
   "start_url": ".",
+  "id": "/",
   "display": "standalone",
-  "theme_color": "#2563eb",
-  "background_color": "#f9fafb"
+  "background_color": "#ffffff",
+  "theme_color": "#317EFB",
+  "description": "Track your expenses and subscriptions with ease.",
+  "icons": [
+    {
+      "src": "icons/logo192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/logo512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any"
+    }
+  ]
 }
