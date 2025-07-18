@@ -150,11 +150,11 @@ const Budget = () => {
   };
 
   // Calculate overall budget summary
-  const totalBudgetLimit = budgets.reduce((sum, budget) => sum + budget.limit, 0);
-  const totalCurrentSpending = budgets.reduce((sum, budget) => {
+  const totalBudgetLimit = Array.isArray(budgets) ? budgets.reduce((sum, budget) => sum + budget.limit, 0) : 0;
+  const totalCurrentSpending = Array.isArray(budgets) ? budgets.reduce((sum, budget) => {
     const progress = getBudgetProgress(budget);
     return sum + progress.current;
-  }, 0);
+  }, 0) : 0;
 
   return (
     <div className="space-y-6">
@@ -217,7 +217,7 @@ const Budget = () => {
       </div>
 
       {/* Budget Alerts */}
-      {dashboardData.budget_alerts && dashboardData.budget_alerts.length > 0 && (
+      {Array.isArray(dashboardData?.budget_alerts) && dashboardData.budget_alerts.length > 0 && (
         <div className="bg-red-50 dark:bg-red-900 border border-red-200 dark:border-red-700 rounded-lg p-4">
           <div className="flex items-center mb-3">
             <AlertTriangle className="w-5 h-5 text-red-600 dark:text-red-400 mr-2" />

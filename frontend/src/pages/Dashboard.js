@@ -40,10 +40,10 @@ const Dashboard = () => {
   };
 
   // Transform category breakdown for charts
-  const categoryChartData = Object.entries(dashboardData.category_breakdown || {}).map(([category, amount]) => ({
+  const categoryChartData = Object.entries(dashboardData?.category_breakdown || {}).map(([category, amount]) => ({
     name: category.charAt(0).toUpperCase() + category.slice(1),
     value: amount,
-    color: CHART_COLORS[Object.keys(dashboardData.category_breakdown).indexOf(category) % CHART_COLORS.length]
+    color: CHART_COLORS[Object.keys(dashboardData?.category_breakdown || {}).indexOf(category) % CHART_COLORS.length]
   }));
 
   // Calculate savings potential
@@ -112,7 +112,7 @@ const Dashboard = () => {
             <div>
               <p className="metric-label">Monthly Spending</p>
               <p className="metric-value">
-                {formatCurrency(dashboardData.current_monthly_spending)}
+                {formatCurrency(dashboardData?.current_monthly_spending || 0)}
               </p>
             </div>
             <div className="p-3 bg-blue-100 dark:bg-blue-900 rounded-full">
@@ -165,7 +165,7 @@ const Dashboard = () => {
       </div>
 
       {/* Budget Alerts */}
-      {dashboardData.budget_alerts && dashboardData.budget_alerts.length > 0 && (
+      {Array.isArray(dashboardData?.budget_alerts) && dashboardData.budget_alerts.length > 0 && (
         <div className="bg-red-50 dark:bg-red-900 border border-red-200 dark:border-red-700 rounded-lg p-4">
           <div className="flex items-center mb-3">
             <AlertTriangle className="w-5 h-5 text-red-600 dark:text-red-400 mr-2" />
@@ -250,7 +250,7 @@ const Dashboard = () => {
             </h3>
           </div>
           <div className="dashboard-card-body">
-            {dashboardData.upcoming_subscriptions && dashboardData.upcoming_subscriptions.length > 0 ? (
+            {Array.isArray(dashboardData?.upcoming_subscriptions) && dashboardData.upcoming_subscriptions.length > 0 ? (
               <div className="space-y-3">
                 {dashboardData.upcoming_subscriptions.slice(0, 5).map((subscription) => (
                   <div key={subscription.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">

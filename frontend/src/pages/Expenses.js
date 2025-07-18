@@ -161,28 +161,27 @@ const Expenses = () => {
   };
 
   // Filter and sort expenses
-  const filteredExpenses = expenses
-    .filter(expense => {
-      const matchesSearch = expense.notes?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           expense.tags?.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
-      const matchesCategory = categoryFilter === '' || expense.category === categoryFilter;
-      const matchesDate = dateFilter === '' || expense.date.startsWith(dateFilter);
-      
-      return matchesSearch && matchesCategory && matchesDate;
-    })
-    .sort((a, b) => {
-      switch (sortBy) {
-        case 'amount':
-          return b.amount - a.amount;
-        case 'category':
-          return a.category.localeCompare(b.category);
-        case 'date':
-          return new Date(b.date) - new Date(a.date);
-        default:
-          return 0;
-      }
-    });
-
+  const filteredExpenses = Array.isArray(expenses)
+    ? expenses.filter(expense => {
+        const matchesSearch = expense.notes?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                             (Array.isArray(expense.tags) && expense.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase())));
+        const matchesCategory = categoryFilter === '' || expense.category === categoryFilter;
+        const matchesDate = dateFilter === '' || expense.date.startsWith(dateFilter);
+        return matchesSearch && matchesCategory && matchesDate;
+      })
+      .sort((a, b) => {
+        switch (sortBy) {
+          case 'amount':
+            return b.amount - a.amount;
+          case 'category':
+            return a.category.localeCompare(b.category);
+          case 'date':
+            return new Date(b.date) - new Date(a.date);
+          default:
+            return 0;
+        }
+      })
+    : [];
   const totalExpenses = filteredExpenses.reduce((sum, expense) => sum + expense.amount, 0);
 
   return (
@@ -287,7 +286,7 @@ const Expenses = () => {
             <span className="text-red-800 dark:text-red-200">{error}</span>
           </div>
         </div>
-      ) : filteredExpenses.length === 0 ? (
+      ) : Array.isArray(filteredExpenses) && filteredExpenses.length === 0 ? (
         <div className="text-center py-12">
           <div className="mx-auto w-24 h-24 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mb-4">
             <Receipt className="w-12 h-12 text-gray-400" />
@@ -324,7 +323,7 @@ const Expenses = () => {
                     </span>
                   </div>
                   
-                  {expense.tags && expense.tags.length > 0 && (
+                  {Array.isArray(expense.tags) && expense.tags.length > 0 && (
                     <div className="flex flex-wrap gap-1 mb-2">
                       {expense.tags.map((tag, index) => (
                         <span key={index} className="badge badge-primary">

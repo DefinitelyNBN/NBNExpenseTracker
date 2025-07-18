@@ -95,22 +95,22 @@ const Analytics = () => {
     }));
 
   // Calculate key metrics
-  const totalSpending = Object.values(analyticsData.categories).reduce((sum, amount) => sum + amount, 0);
-  const topCategory = Object.entries(analyticsData.categories).reduce((prev, current) => 
+  const totalSpending = Object.values(analyticsData.categories || {}).reduce((sum, amount) => sum + amount, 0);
+  const topCategory = Object.entries(analyticsData.categories || {}).reduce((prev, current) => 
     prev[1] > current[1] ? prev : current, ['', 0]
   );
-  const averageMonthlySpending = Object.values(analyticsData.trends).reduce((sum, amount) => sum + amount, 0) / 
-    Math.max(Object.keys(analyticsData.trends).length, 1);
+  const averageMonthlySpending = Object.values(analyticsData.trends || {}).reduce((sum, amount) => sum + amount, 0) / 
+    Math.max(Object.keys(analyticsData.trends || {}).length, 1);
 
   // Calculate subscription vs expenses breakdown
-  const subscriptionYearlyCost = subscriptions.reduce((sum, sub) => {
+  const subscriptionYearlyCost = Array.isArray(subscriptions) ? subscriptions.reduce((sum, sub) => {
     if (sub.is_active) {
       return sum + (sub.billing_frequency === 'monthly' ? sub.cost * 12 : sub.cost);
     }
     return sum;
-  }, 0);
+  }, 0) : 0;
 
-  const totalExpenses = expenses.reduce((sum, expense) => sum + expense.amount, 0);
+  const totalExpenses = Array.isArray(expenses) ? expenses.reduce((sum, expense) => sum + expense.amount, 0) : 0;
   const subscriptionVsExpensesData = [
     { name: 'Subscriptions', value: subscriptionYearlyCost, fill: CHART_COLORS[0] },
     { name: 'Other Expenses', value: totalExpenses, fill: CHART_COLORS[1] }
